@@ -9,16 +9,14 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 
-class FireSpot (Base):
+class FireSpot(Base):
     __tablename__ = 'fire_location'
     id = Column(Integer, primary_key=True, autoincrement=True)
     latitude = Column(Float)
     longitude = Column(Float)
+    date_time = Column(DateTime)
+    is_day = Column(Boolean)
 
-    def __init__(self, latitude=None, longitude=None):
-
-        self.latitude = latitude
-        self.longitude = longitude
 
     def __repr__(self):
         return '{}:{}'.format(self.latitude, self.longitude)
@@ -29,24 +27,23 @@ class FireParams(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ti4channel = Column(Float)
     ti5channel = Column(Float)
-    date = Column(DateTime)
-    time = Column(DateTime)
     confidence = Column(String(50))
     fire_intens = Column(Float)
-    day_night = Column(String(5))
     object_id = Column(Integer, ForeignKey('fire_location.id'))
 
     def __repr__(self):
         return '{},{},{},{},{},{},{},'.format(self.ti4channel, self.ti5channel, self.date, self.time,
                                               self.confidence, self.fire_intens, self.day_night)
 
-
-class WindParams(Base):
+class WeatherParams(Base):
     __tablename__ = 'wind_params'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    object_id = Column(Integer, ForeignKey('fire_location.id'))
     speed = Column(Float)
     wind_direction = Column(Float)
-    object_id = Column(Integer, ForeignKey('fire_location.id'))
+    temperature = Column(Float)
+    humidity = Column(Integer)
+    is_raining = Column(Boolean)
 
     def __repr__(self):
         return '{},{}'.format(self.speed, self.wind_direction)
