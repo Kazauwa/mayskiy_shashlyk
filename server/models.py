@@ -17,7 +17,6 @@ class FireSpot(Base):
     date_time = Column(DateTime)
     is_day = Column(Boolean)
 
-
     def __repr__(self):
         return '{}:{}'.format(self.latitude, self.longitude)
 
@@ -35,6 +34,7 @@ class FireParams(Base):
         return '{},{},{},{},{},{},{},'.format(self.ti4channel, self.ti5channel, self.date, self.time,
                                               self.confidence, self.fire_intens, self.day_night)
 
+
 class WeatherParams(Base):
     __tablename__ = 'wind_params'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -50,13 +50,13 @@ class WeatherParams(Base):
 
 
 class Polygon(Base):
-    __table__ = 'polygons'
+    __tablename__ = 'polygons'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(String(50))
+    # type = Column(String(50))
 
 
 class SpotM2MPolygon(Base):
-    __table__ = 'spotm2mpolygon'
+    __tablename__ = 'spotm2mpolygon'
     id = Column(Integer, primary_key=True, autoincrement=True)
     polygon_id = Column(Integer, ForeignKey('polygons.id'))
     spot_id = Column(Integer, ForeignKey('fire_location.id'))
