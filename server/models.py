@@ -52,6 +52,7 @@ class WeatherParams(Base):
 class Polygon(Base):
     __table__ = 'polygons'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    type = Column(String(50))
 
 
 class SpotM2MPolygon(Base):
