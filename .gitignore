@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.txt
 
 # C extensions
 *.so
@@ -89,4 +90,6 @@ ENV/
 .ropeproject
 .python-version
 
+
+# DataBase stuff
 *.sqlite
