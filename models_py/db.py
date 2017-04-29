@@ -52,5 +52,17 @@ class WindParams(Base):
         return '{},{}'.format(self.speed, self.wind_direction)
 
 
+class Polygon(Base):
+    __table__ = 'polygons'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+
+class SpotM2MPolygon(Base):
+    __table__ = 'spotm2mpolygon'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    polygon_id = Column(Integer, ForeignKey('polygons.id'))
+    spot_id = Column(Integer, ForeignKey('fire_location.id'))
+
+
 if __name__ == '__main__':
     Base.metadata.create_all(bind=engine)
