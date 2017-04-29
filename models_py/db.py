@@ -9,7 +9,7 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 
-class FireSpot (Base):
+class FireSpot(Base):
     __tablename__ = 'fire_location'
     id = Column(Integer, primary_key=True, autoincrement=True)
     latitude = Column(Float)
