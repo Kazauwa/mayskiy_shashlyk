@@ -54,3 +54,7 @@ def store_polygons():
         polygon_to_spots = form_polygon_to_spots_relationships(spot_group_ids, polygon.id)
         models.db_session.add_all(polygon_to_spots)
         models.db_session.commit()
+
+
+if __name__ == '__main__':
+    store_polygons()
