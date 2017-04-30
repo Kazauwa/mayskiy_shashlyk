@@ -16,6 +16,7 @@ def api_index():
         data = json.load(fire_data)
     return json.dumps(data)
 
+
 @app.route('/api/add_event')
 def api_add_event():
     return 'Ok', 200
