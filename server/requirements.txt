@@ -1,2 +1,4 @@
 flask==0.12.1
 flask-sqlalchemy==2.2
+haversine==0.4.5
+pytest==3.0.7
