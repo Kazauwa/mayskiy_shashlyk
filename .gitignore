@@ -88,9 +88,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
-.python-version
-
 
 # DataBase stuff
 *.sqlite
-*.csv

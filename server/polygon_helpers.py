@@ -5,7 +5,7 @@ import models
 
 
 def is_close_enough(first_fire_spot, second_fire_spot):
-    acceptable_distance_meters = 500
+    acceptable_distance_meters = 10
     first_point = (first_fire_spot.longitude, first_fire_spot.latitude)
     second_point = (second_fire_spot.longitude, second_fire_spot.latitude)
     distance_in_meters = haversine(first_point, second_point) * 1000
@@ -44,7 +44,7 @@ def get_outer_fire_spots(fire_spots):
 
 
 def store_polygons():
-    fire_spots = models.FireSpot.query.all()
+    fire_spots = models.FireSpot.query.all()[:3000]
     fire_spot_groups = group_fire_spots_by_distance(fire_spots)
     for spot_group in fire_spot_groups:
         polygon = models.Polygon(type='Fire')

@@ -51,4 +51,4 @@ def add_weather_info_to_db(weather_info, obj_id):
 
 
 if __name__ == '__main__':
-    loading_data('../../VNP14IMGTDL_NRT_Russia_and_Asia_7d.csv')
+    loading_data('VNP14IMGTDL_NRT_Russia_and_Asia_24h.csv')
