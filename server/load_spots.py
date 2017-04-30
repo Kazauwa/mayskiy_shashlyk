@@ -23,6 +23,8 @@ def loading_data(file):
                                      ti5channel=row[10],
                                      confidence=row[8],
                                      fire_intens=row[11])
+            if fire_params.confidence == 'low':
+                continue
             db_session.add(fire_spot_data)
             db_session.add(fire_params)
     db_session.commit()
