@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -13,11 +14,37 @@
         margin: 0;
         padding: 0;
       }
+      .alert {
+        margin-bottom: 0px;
+      }
     </style>
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-  </head>
-    <div id="map"></div>
     <script>
+      var latitude = 0;
+      var longitude = 0;
+    </script>
+  </head>
+    <div class="alert alert-success alert-dismissible" role="alert" id="success-alert">
+        <button type="button" class="close" aria-label="Close" id="close-button"><span aria-hidden="true">&times;</span></button>
+        Ваше сообщение приняо.
+    </div>
+    <div id="map"></div>
+    <div class="modal fade bs-example-modal-sm" id="danger_dialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Горим?</h4>
+            </div>
+            <div class="modal-body">
+                <button type="button" class="btn btn-danger btn-sm" id="fire-button">Это пожар!!!</button>
+                <button type="button" class="btn btn-primary btn-sm" id="smoke-button">Нет. Это только дым!</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <script>
+      $('#success-alert').hide()
       var map;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -25,6 +52,38 @@
           center: {lat: -33.865427, lng: 151.196123},
           mapTypeId: 'terrain'
         });
+
+        map.addListener('click', function(event) {
+          window.latitude = event.latLng.lat();
+          window.longitude = event.latLng.lng();
+
+          $('#danger_dialog').modal('show');
+        });
+
+        $('#fire-button').click(function() {
+            var type = 'fire';
+            push_event(type);
+        });
+
+        $('#smoke-button').click(function() {
+            var type = 'smoke';
+            push_event(type);
+        });
+
+        $('#close-button').click(function() {
+            $('#success-alert').hide()
+        });
+
+        function push_event(type) {
+            var geo_get_parameter = '?latitude=' + window.latitude;
+            geo_get_parameter = geo_get_parameter + '&longitude=' + window.longitude;
+            geo_get_parameter = geo_get_parameter + '&type=' + type;
+
+            $.get( "/api/add_event" + geo_get_parameter, function( data ) {
+                 $('#success-alert').show()
+           });
+           $('#danger_dialog').modal('hide');
+        };
 
         $.getJSON('/api/', function(json) {
             var color = null;
@@ -64,5 +123,6 @@
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2loeuwqUj2N4AyyppZNBYRIrJSylzh3w&libraries=visualization&callback=initMap">
     </script>
-  </body>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa", crossorigin="anonymous")></script>
+    </body>
 </html>
