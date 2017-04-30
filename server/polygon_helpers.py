@@ -54,3 +54,64 @@ def store_polygons():
         polygon_to_spots = form_polygon_to_spots_relationships(spot_group_ids, polygon.id)
         models.db_session.add_all(polygon_to_spots)
         models.db_session.commit()
+
+
+def determine_fire_center(fire_polygon):
+    spot_polygon_relationships = models.SpotM2MPolygon.query.filter_by(polygon_id=fire_polygon.id).all()
+    spot_ids = [relationship.spot_id for relationship in spot_polygon_relationships]
+    spots = models.FireSpot.query.filter(models.FireSpot.id.in_(spot_ids)).all()
+    oldest_spot = min(spots, key=lambda x: x.date_time)
+    return oldest_spot
+
+
+def store_firestart_polygon(fire_polygon, db_session):
+    fire_center = determine_fire_center(fire_polygon)
+    fake_fire_spot1 = models.FireSpot(
+        latitude=fire_center.latitude + 0.001,
+        longitude=fire_center.longitude,
+        date_time=fire_center.date_time,
+        is_day=fire_center.is_day
+    )
+    fake_fire_spot2 = models.FireSpot(
+        latitude=fire_center.latitude,
+        longitude=fire_center.longitude + 0.001,
+        date_time=fire_center.date_time,
+        is_day=fire_center.is_day
+    )
+    fake_fire_spot3 = models.FireSpot(
+        latitude=fire_center.latitude + 0.001,
+        longitude=fire_center.longitude + 0.001,
+        date_time=fire_center.date_time,
+        is_day=fire_center.is_day
+    )
+    firestart_polygon = models.Polygon(type='fire_start')
+    db_session.add_all(
+        [
+            fake_fire_spot1,
+            fake_fire_spot2,
+            fake_fire_spot3,
+            firestart_polygon
+        ]
+    )
+    db_session.commit()
+    fake_fire_spot1_relationship = SpotM2MPolygon(
+        polygon_id=firestart_polygon.id,
+        spot_id=fake_fire_spot1.id
+    )
+    fake_fire_spot2_relationship = SpotM2MPolygon(
+        polygon_id=firestart_polygon.id,
+        spot_id=fake_fire_spot1.id
+    )
+    fake_fire_spot3_relationship = SpotM2MPolygon(
+        polygon_id=firestart_polygon.id,
+        spot_id=fake_fire_spot1.id
+    )
+    db_session.add_all(
+        [
+            fake_fire_spot1_relationship,
+            fake_fire_spot2_relationship,
+            fake_fire_spot3_relationship
+        ]
+    )
+    db_session.commit()
+
