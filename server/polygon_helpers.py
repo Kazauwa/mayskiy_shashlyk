@@ -115,3 +115,6 @@ def store_firestart_polygon(fire_polygon, db_session):
     )
     db_session.commit()
 
+
+if __name__ == '__main__':
+    store_polygons()
