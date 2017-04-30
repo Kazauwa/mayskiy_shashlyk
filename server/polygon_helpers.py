@@ -43,8 +43,8 @@ def get_outer_fire_spots(fire_spots):
     return outer_fire_spots
 
 
-if __name__ == '__main__':
-    fire_spots = models.FireSpot.query.all()[:10]
+def store_polygons():
+    fire_spots = models.FireSpot.query.all()
     fire_spot_groups = group_fire_spots_by_distance(fire_spots)
     for spot_group in fire_spot_groups:
         polygon = models.Polygon(type='Fire')
