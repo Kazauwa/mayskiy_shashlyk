@@ -1,13 +1,13 @@
 import numpy as np
-from haversine import haversine 
+from haversine import haversine
 from scipy.spatial import ConvexHull
 import models
 
 
 def is_close_enough(first_fire_spot, second_fire_spot):
     acceptable_distance_meters = 500
-    first_point = (first_fire_spot.longitude, first_fire_spot.latitude)    
-    second_point = (second_fire_spot.longitude, second_fire_spot.latitude)    
+    first_point = (first_fire_spot.longitude, first_fire_spot.latitude)
+    second_point = (second_fire_spot.longitude, second_fire_spot.latitude)
     distance_in_meters = haversine(first_point, second_point) * 1000
     return distance_in_meters <= acceptable_distance_meters
 
@@ -17,7 +17,7 @@ def group_fire_spots_by_distance(fire_spots):
     is_in_group = [False for _ in range(len(fire_spots))]
     for start_spot_index, start_spot in enumerate(fire_spots):
         if is_in_group[start_spot_index]:
-           continue
+            continue
         nearby_fire_spots = [start_spot]
         is_in_group[start_spot_index] = True
         for current_spot_index, current_spot in enumerate(fire_spots[start_spot_index + 1:]):
