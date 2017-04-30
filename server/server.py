@@ -1,7 +1,6 @@
-import os, json
-
 from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
+from models import Polygon, SpotM2MPolygon, FireSpot
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -10,11 +9,20 @@ db = SQLAlchemy(app)
 
 @app.route('/api/')
 def api_index():
-    site_root_dir = os.path.realpath(os.path.dirname(__file__))
-    json_url = os.path.join(site_root_dir, "static", "google.json")
-    with open(json_url) as fire_data:
-        data = json.load(fire_data)
-    return json.dumps(data)
+    response = []
+    for polygon in Polygon.query.all():
+        polygon_json = {}
+        all_relations = SpotM2MPolygon.query.filter_by(polygon_id=polygon.id)
+        all_spots = [FireSpot.query.get(relation.spot_id) for relation in all_relations]
+        if not all_spots:
+            continue
+        polygon_json['type'] = polygon.type
+        surface = [{'lat': spot.latitude, 'lng': spot.longitude} for spot in all_spots]
+        polygon_json['external_surface'] = surface
+        polygon_json['internal_surface'] = []
+        response.append(polygon_json)
+    return jsonify(response)
+
 
 
 @app.route('/api/add_event')
