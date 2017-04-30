@@ -131,6 +131,10 @@
                     };
                 });
 
+                new google.maps.Marker({
+                    position: surfaces.external_surface[0],
+                    map: map
+                });
 
                 map.data.add({geometry: poligon, properties: {
                     fillColor: color

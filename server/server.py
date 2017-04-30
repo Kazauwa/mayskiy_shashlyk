@@ -19,7 +19,7 @@ def api_index():
         polygon_json['type'] = polygon.type
         surface = [{'lat': spot.latitude, 'lng': spot.longitude} for spot in all_spots]
         polygon_json['external_surface'] = surface
-        polygon_json['internal_surface'] = []
+        polygon_json['internal_surface'] = None
         response.append(polygon_json)
     return jsonify(response)
 
