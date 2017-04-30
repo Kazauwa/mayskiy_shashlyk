@@ -1,8 +1,8 @@
 from models import db_session, FireSpot, FireParams, WeatherParams
 import datetime
 import requests
-import json
 import csv
+from itertools import cycle
 
 
 def loading_data(file):
@@ -32,23 +32,40 @@ def loading_data(file):
     db_session.commit()
 
 
-def get_weather_info(lat, lng):
-    api_url = 'http://api.openweathermap.org/data/2.5/weather'
-    payload = {'lat': lat, 'lng': lng, 'APPID': '12d818fdb905bc4498c10f89ed0ec678'}
+def rain_or_not(description):
+    if 'rain' in description:
+        return True
+    elif 'snow' in description:
+        return True
+    else:
+        return False
+
+
+def get_and_add_to_db_weather_info(lat, lng, obj_id, app_id):
+    api_url = 'http://api.openweathermap.org/data/2.5/weather?'
+    payload = {'lat': lat, 'lon': lng, 'APPID': app_id}
     weather_info = requests.get(api_url, params=payload)
-    return weather_info.json
-
-
-def add_weather_info_to_db(weather_info, obj_id):
+    speed = weather_info.json().get('wind').get('speed')
+    wind_direction = weather_info.json().get('wind').get('deg')
+    temperature = weather_info.json().get('main').get('temp')
+    humidity = weather_info.json().get('main').get('humidity')
+    is_raining = rain_or_not(weather_info.json().get('weather')[0].get('description'))
     weather_params = WeatherParams(object_id=obj_id,
-                                   speed=weather_info['wind']['speed'],
-                                   wind_direction=weather_info['wind']['deg'],
-                                   temperature=weather_info['main']['temp'],
-                                   humidity=weather_info['main']['humidity'],
-                                   is_raining=1 if 'rain' or 'snow' in weather_info['weather']['description'] else 0)
+                                   speed=speed,
+                                   wind_direction=wind_direction,
+                                   temperature=temperature,
+                                   humidity=humidity,
+                                   is_raining=is_raining)
     db_session.add(weather_params)
     db_session.commit()
 
 
 if __name__ == '__main__':
     loading_data('VNP14IMGTDL_NRT_Russia_and_Asia_24h.csv')
+    APPIDS = ['caf3f5b090bad4ab4f01d448894f54ce', '12d818fdb905bc4498c10f89ed0ec678',
+              'fbbeb308b9952d73e6bbca79f7e5d454',
+              '40147f09120777a7b624ade7be19b755', '431232f6deabb63aa4d90efdafde6007']
+    keys = cycle(APPIDS)
+    spots_id_list = [(item_id.latitude, item_id.longitude, item_id.id) for item_id in db_session.query(FireSpot)]
+    for item in spots_id_list:
+        get_and_add_to_db_weather_info(item[0], item[1], item[2], next(keys))
