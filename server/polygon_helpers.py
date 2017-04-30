@@ -1,7 +1,7 @@
-from haversine import haversine 
 import numpy as np
+from haversine import haversine 
 from scipy.spatial import ConvexHull
-from server import models
+import models
 
 
 def is_close_enough(first_fire_spot, second_fire_spot):
@@ -28,7 +28,7 @@ def group_fire_spots_by_distance(fire_spots):
     return groups
 
 
-def form_polygon_to_spots_relationship(fire_spot_ids, polygon_id):
+def form_polygon_to_spots_relationships(fire_spot_ids, polygon_id):
     spot_polygon_relationships = []
     for fire_spot_id in fire_spot_ids:
         spot_polygon = models.SpotM2MPolygon(polygon_id=polygon_id, spot_id=fire_spot_id)
@@ -41,3 +41,16 @@ def get_outer_fire_spots(fire_spots):
     convex_hull_indices = coordinates_data[ConvexHull(coordinates_data).vertices]
     outer_fire_spots = [fire_spots[spot_index] for spot_index in convex_hull_indices]
     return outer_fire_spots
+
+
+if __name__ == '__main__':
+    fire_spots = models.FireSpot.query.all()[:10]
+    fire_spot_groups = group_fire_spots_by_distance(fire_spots)
+    for spot_group in fire_spot_groups:
+        polygon = models.Polygon(type='Fire')
+        models.db_session.add(polygon)
+        models.db_session.commit()
+        spot_group_ids = [spot.id for spot in spot_group]
+        polygon_to_spots = form_polygon_to_spots_relationships(spot_group_ids, polygon.id)
+        models.db_session.add_all(polygon_to_spots)
+        models.db_session.commit()
