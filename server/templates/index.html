@@ -2,7 +2,8 @@
 <html>
   <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <style>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.css" />
+      <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
@@ -17,6 +18,13 @@
       .alert {
         margin-bottom: 0px;
       }
+      .footer {
+       position: absolute;
+       height: 40px;
+       bottom: 40px;
+      }
+
+}
     </style>
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script>
@@ -29,6 +37,16 @@
         Ваше сообщение приняо.
     </div>
     <div id="map"></div>
+    <div class="footer col-xs-10 col-xs-offset-1">
+        <div class="well">
+            <div class="row">
+                <div class="col-xs-3">
+                    <b> Прогноз распространения: </b>
+                </div>
+                <div id="slider-predict" class="col-xs-8"></div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade bs-example-modal-sm" id="danger_dialog" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -45,8 +63,10 @@
     </div><!-- /.modal -->
     <script>
       $('#success-alert').hide()
+
       var map;
-      function initMap() {
+      function initMap(predict) {
+        predict = predict || '0';
         map = new google.maps.Map(document.getElementById('map'), {
           zoom: 2,
           center: {lat: -33.865427, lng: 151.196123},
@@ -85,7 +105,7 @@
            $('#danger_dialog').modal('hide');
         };
 
-        $.getJSON('/api/', function(json) {
+        $.getJSON('/api/?predict=' + predict, function(json) {
             var color = null;
             json.forEach(function(surfaces) {
                 if (surfaces.internal_surface == null) {
@@ -123,6 +143,24 @@
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2loeuwqUj2N4AyyppZNBYRIrJSylzh3w&libraries=visualization&callback=initMap">
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa", crossorigin="anonymous")></script>
-    </body>
+    <script>
+        var slider = document.getElementById('slider-predict');
+
+        noUiSlider.create(slider, {
+	        start: [0,],
+	        connect: true,
+	        tooltips: true,
+	        step: 1,
+	        range: {
+		        'min': 0,
+		        'max': 20
+	        }
+        });
+        slider.noUiSlider.on('change', function(values){
+	        initMap(values);
+        });
+    </script>
+  </body>
 </html>

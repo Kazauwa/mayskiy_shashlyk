@@ -24,6 +24,7 @@ def api_index():
     return jsonify(response)
 
 
+
 @app.route('/api/add_event')
 def api_add_event():
     return 'Ok', 200
