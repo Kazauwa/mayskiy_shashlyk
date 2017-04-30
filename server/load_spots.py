@@ -25,6 +25,8 @@ def loading_data(file):
                                      fire_intens=row[11])
             if fire_params.confidence == 'low':
                 continue
+            if fire_spot_data.is_day:
+                continue
             db_session.add(fire_spot_data)
             db_session.add(fire_params)
     db_session.commit()
