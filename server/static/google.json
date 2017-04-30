@@ -1,0 +1,30 @@
+[{"type": "fire",
+   "external_surface": [
+      {"lat": -32.364, "lng": 153.207},
+      {"lat": -35.364, "lng": 153.207},
+      {"lat": -38.364, "lng": 155.207}
+    ],
+    "internal_surface": [
+      {"lat": -32.364, "lng": 153.207},
+      {"lat": -35.364, "lng": 153.207},
+      {"lat": -32.364, "lng": 154.207}
+    ]
+  },
+  {"type": "smoke",
+   "external_surface": [
+      {"lat": 32.364, "lng": 153.207},
+      {"lat": 35.364, "lng": 153.207},
+      {"lat": 33.364, "lng": 155.207}
+    ]
+  },
+  {"type": "fire_start",
+   "external_surface": [
+      {"lat": -15.364, "lng": 53.207},
+      {"lat": -15.364, "lng": 53.207}
+    ],
+    "internal_surface": [
+      {"lat": -32.364, "lng": 73.207},
+      {"lat": -35.364, "lng": 73.207}
+    ]
+  }
+]
